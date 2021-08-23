@@ -136,12 +136,49 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
     })
 
 
+    // To delete any data
+    app.delete('/remove',(req,res)=>{
+
+        var val=req.body.roll
+        var facebook_username = req.body.facebook; var linkedin_username=req.body.linkedin; var discord_username=req.body.discord_user; var discord_tag=req.discord_tag;
+        var instagram_username=req.body.instagram;
+    
+        var identify_obj = { 
+            "_id" : val
+        }
+        var upload_obj= {}
+        if(facebook_username!=undefined){
+            upload_obj['facebook_username']=null
+        }
+        if(linkedin_username!=undefined){
+            upload_obj['linkedin_username']=null
+        }
+        if(discord_username!=undefined && discord_tag!=undefined){
+            upload_obj['discord_tag']=null
+            upload_obj['discord_username']=null
+        }
+        if(instagram_username!=undefined){
+            upload_obj['instagram_username']=null
+        }
+
+        students_info_list.findOneAndUpdate(
+            {
+                "_id":val
+            },
+            {
+                $unset: upload_obj
+            },
+            {
+                upsert: true
+            }
+        ).then(result=>{plog(result);res.send("Updated")}).catch(err=>{console.error(err)})
+
+    })
+    //delete ends
+
+
   })
 
-
-app.get('/',(req,res)=>{
-    res.send(`NO HELLO WORLD ! ${__dirname}`)
-})
 
 
 
